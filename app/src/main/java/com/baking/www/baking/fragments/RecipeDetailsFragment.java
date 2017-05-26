@@ -10,48 +10,49 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.baking.www.baking.DataFetchers.dataModels.Ingredients;
 import com.baking.www.baking.DataFetchers.dataModels.Recipe;
 import com.baking.www.baking.DataFetchers.dataModels.Steps;
 import com.baking.www.baking.R;
-import com.baking.www.baking.adapters.IngredientsRecyclerAdapter;
 import com.baking.www.baking.adapters.StepsRecyclerAdapter;
+import com.baking.www.baking.utilities.Logging;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RecipeDetailsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RecipeDetailsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import org.json.JSONArray;
+import org.json.JSONException;
+
+
 public class RecipeDetailsFragment extends
-        Fragment implements IngredientsRecyclerAdapter.OnIngredientClickListener, StepsRecyclerAdapter.OnStepClickListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String RECIPE_KEY = "recipe";
+        Fragment implements StepsRecyclerAdapter.OnStepClickListener {
 
-    // TODO: Rename and change types of parameters
+    private static final String RECIPE_KEY = "recipe";
+    private static final String INGREDIENTS_KEY = "ingredients";
+    private static final String STEPS_KEY = "steps";
+
+    public static final int ITEM_INGREDIENT = 0;
+    public static final int ITEM_STEP = 1;
+
+
     private String mParam1;
     private Recipe mRecipe;
-    private RecyclerView ingredientsRV, stepsRV;
+    private RecyclerView stepsRV;
     private View v;
 
     private OnFragmentInteractionListener mListener;
     private Steps mSteps;
-    private Ingredients mIngredients;
-    private IngredientsRecyclerAdapter ingredientsRecyclerAdapter;
+
     private StepsRecyclerAdapter stepsRecyclerAdapter;
 
     public RecipeDetailsFragment() {
-        // Required empty public constructor
     }
 
 
-    public static RecipeDetailsFragment newInstance(Recipe recipe) {
+    public static RecipeDetailsFragment newInstance(Recipe recipe,
+                                                    String ingredients, String steps) {
         RecipeDetailsFragment fragment = new RecipeDetailsFragment();
         Bundle args = new Bundle();
         args.putParcelable(RECIPE_KEY, recipe);
+        args.putString(INGREDIENTS_KEY, ingredients);
+        args.putString(STEPS_KEY, steps);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,43 +61,40 @@ public class RecipeDetailsFragment extends
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(RECIPE_KEY);
+//            mParam1 = getArguments().getParcelable(RECIPE_KEY);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_recipe_details, container, false);
+
         mRecipe = getArguments().getParcelable(RECIPE_KEY);
-        mIngredients = mRecipe.getIngredients();
-        mSteps = mRecipe.getSteps();
+        String steps = getArguments().getString(STEPS_KEY);
+
+        try {
+            JSONArray stepssJsonArray = new JSONArray(steps);
+            mSteps = new Steps(stepssJsonArray);
+        } catch (JSONException e) {
+            Logging.log(e.getMessage());
+        }
+
         initViews();
         return v;
     }
 
     private void initViews() {
-        LinearLayoutManager ingredientsLayoutManager = new LinearLayoutManager(getActivity());
-        ingredientsRecyclerAdapter = new IngredientsRecyclerAdapter(this, mIngredients);
+
         stepsRecyclerAdapter = new StepsRecyclerAdapter(mSteps, this);
         LinearLayoutManager stepsLayoutManager = new LinearLayoutManager(getActivity());
-
-        ingredientsRV = (RecyclerView) v.findViewById(R.id.rv_ingredients);
-        ingredientsRV.setLayoutManager(ingredientsLayoutManager);
-        ingredientsRV.setAdapter(ingredientsRecyclerAdapter);
 
         stepsRV = (RecyclerView) v.findViewById(R.id.rv_steps);
         stepsRV.setLayoutManager(stepsLayoutManager);
         stepsRV.setAdapter(stepsRecyclerAdapter);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -115,28 +113,17 @@ public class RecipeDetailsFragment extends
         mListener = null;
     }
 
-    @Override
-    public void onIngredientItemClick(int itemPosition) {
-
-    }
 
     @Override
     public void onStepItemClick(int itemPosition) {
-
+        if (itemPosition == 0) {
+            mListener.onFragmentInteraction(ITEM_INGREDIENT);
+        } else {
+            mListener.onFragmentInteraction(itemPosition);
+        }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(int itemPosition);
     }
 }

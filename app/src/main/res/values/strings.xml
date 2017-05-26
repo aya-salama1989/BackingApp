@@ -3,7 +3,8 @@
     <string name="servings_holder">Servings: %1$d</string>
     <string name="ingredients_holder">Ingredients: %1$d</string>
 
-    <string name="base_url" translatable="false">https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json</string>
+    <string name="base_url" translatable="false">
+        https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -12,4 +13,10 @@
     <string name="internet_error">Internet Connection Error</string>
     <string name="server_error">Server Error</string>
     <string name="ingredient_holder">%1$d %2$s of %3$s</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="previous">Previous Step</string>
+    <string name="next">Next Step</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="recipe">Recipe</string>
 </resources>

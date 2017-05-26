@@ -1,5 +1,7 @@
 package com.baking.www.baking.DataFetchers.dataModels;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -9,7 +11,7 @@ import org.json.JSONObject;
  * Created by Dell on 10/05/2017.
  */
 
-public class Step {
+public class Step implements Parcelable {
     private String TAG = getClass().getName();
 
     private int id;
@@ -41,6 +43,27 @@ public class Step {
 
     }
 
+    protected Step(Parcel in) {
+        TAG = in.readString();
+        id = in.readInt();
+        shortDescription = in.readString();
+        description = in.readString();
+        videoURL = in.readString();
+        thumbnailURL = in.readString();
+    }
+
+    public static final Creator<Step> CREATOR = new Creator<Step>() {
+        @Override
+        public Step createFromParcel(Parcel in) {
+            return new Step(in);
+        }
+
+        @Override
+        public Step[] newArray(int size) {
+            return new Step[size];
+        }
+    };
+
     public int getId() {
         return id;
     }
@@ -59,5 +82,20 @@ public class Step {
 
     public String getThumbnailURL() {
         return thumbnailURL;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(TAG);
+        dest.writeInt(id);
+        dest.writeString(shortDescription);
+        dest.writeString(description);
+        dest.writeString(videoURL);
+        dest.writeString(thumbnailURL);
     }
 }

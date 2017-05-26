@@ -1,17 +1,13 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/small"
-    tools:context="com.baking.www.baking.fragments.RecipeDetailsFragment">
-
-
+    tools:context="com.baking.www.baking.fragments.IngredientsFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_steps"
+        android:id="@+id/rv_ingredients"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false" />
 
-</LinearLayout>
+</FrameLayout>

@@ -7,6 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_margin="@dimen/small"
+    android:background="@drawable/touch_selector"
     android:elevation="@dimen/x_small">
 
     <android.support.constraint.ConstraintLayout
