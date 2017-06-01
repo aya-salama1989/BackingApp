@@ -1,53 +1,52 @@
 package com.baking.www.baking.fragments;
 
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Button;
 
-import com.baking.www.baking.DataFetchers.dataModels.Step;
+import com.baking.www.baking.DataFetchers.dataModels.Steps;
 import com.baking.www.baking.R;
+import com.baking.www.baking.adapters.ViewPagerAdapter;
 import com.baking.www.baking.utilities.Logging;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
-import static com.baking.www.baking.MainActivity.mTwoPanel;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class StepDetailsFragment extends Fragment {
 
-    private static final String ARG_STEP_DATA = "param1";
+    private static final String ARG_STEP_DATA = "step_data";
+    private static final String ARG_STEP_POSITION = "step_position";
 
-
-    //    private OnFragmentInteractionListener mListener;
+    @BindView(R.id.vp_steps)
+    ViewPager viewPager;
+    @BindView(R.id.btn_next)
+    Button btnNext;
+    @BindView(R.id.btn_previous)
+    Button btnPrevious;
+    private ViewPagerAdapter viewPagerAdapter;
     private View v;
-    private SimpleExoPlayerView simpleExoPlayerView;
-    private SimpleExoPlayer mExoPlayer;
-    private TextView stepTV;
 
     public StepDetailsFragment() {
         // Required empty public constructor
     }
 
-    public static StepDetailsFragment newInstance(Step step) {
+    public static StepDetailsFragment newInstance(String steps, int stepPosition) {
         StepDetailsFragment fragment = new StepDetailsFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_STEP_DATA, step);
+        args.putString(ARG_STEP_DATA, steps);
+        args.putInt(ARG_STEP_POSITION, stepPosition);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,62 +65,43 @@ public class StepDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_step_details, container, false);
+        ButterKnife.bind(this, v);
         initViews();
         return v;
     }
 
+   private Steps steps;
     private void initViews() {
-        stepTV = (TextView) v.findViewById(R.id.tv_step_description);
-        simpleExoPlayerView = (SimpleExoPlayerView) v.findViewById(R.id.playerView);
-        simpleExoPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.drawable.img_placeholder));
-        Step step = getArguments().getParcelable(ARG_STEP_DATA);
-        Logging.log(step.getVideoURL());
-        initializePlayer(Uri.parse(step.getVideoURL()));
-        stepTV.setText(step.getDescription());
-        LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.next_prev_steps);
-        if (mTwoPanel) {
-            linearLayout.setVisibility(View.GONE);
-        } else {
-            linearLayout.setVisibility(View.VISIBLE);
+        JSONArray jsonArray;
+
+        try {
+            jsonArray = new JSONArray(getArguments().getString(ARG_STEP_DATA));
+            steps = new Steps(jsonArray);
+        } catch (JSONException e) {
+            Logging.log(e.getMessage());
         }
+
+        //TODO: send step position
+        viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList(steps),
+                getArguments().getInt(ARG_STEP_POSITION));
+        viewPager.setAdapter(viewPagerAdapter);
+
+        btnNext.setOnClickListener((View v) -> {
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        });
+
+        btnPrevious.setOnClickListener((View v) -> {
+            viewPager.setCurrentItem(viewPager.getCurrentItem()  + 1);
+        });
     }
 
-    private void initializePlayer(Uri mediaUri) {
-        if (mExoPlayer == null) {
-            // Create an instance of the ExoPlayer.
-            TrackSelector trackSelector = new DefaultTrackSelector();
-            LoadControl loadControl = new DefaultLoadControl();
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
-            simpleExoPlayerView.setPlayer(mExoPlayer);
-            // Prepare the MediaSource.
-            String userAgent = Util.getUserAgent(getActivity(), "Backing");
-            MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
-                    getActivity(), userAgent), new DefaultExtractorsFactory(), null, null);
-            mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
+
+    private List<Fragment> fragmentList(Steps steps){
+        List<Fragment> list = new ArrayList<>();
+        for(int i = 0; i<steps.size();i++){
+            list.add(StepDetailsFragmentsArray.newInstance(i, steps.get(i)));
         }
+        return list;
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-//
-//
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
 }

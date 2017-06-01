@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.baking.www.baking.DataFetchers.dataModels.Recipes;
+import com.baking.www.baking.IdlingResource.SimpleIdlingResource;
 import com.baking.www.baking.utilities.Logging;
 
 import org.json.JSONArray;
@@ -17,13 +18,20 @@ public class RecipesDataFetcher extends BaseDataFetcher {
         super(context, mListener);
     }
 
-    public void getRecipes() {
+    public void getRecipes(SimpleIdlingResource simpleIdlingResource) {
+        if(simpleIdlingResource!=null){
+            simpleIdlingResource.setIdleState(false);
+
+        }
         String URL = BaseURL;
         Logging.log("getCountries: " + URL);
         JsonArrayRequest jsonObjReq = new JsonArrayRequest(URL, (JSONArray jsonArr) -> {
             Logging.log("getCountries response: " + jsonArr.toString());
             Recipes recipes = new Recipes(jsonArr);
             ((RecipesFetcherDataListener) mListener).onConnectionDone(recipes);
+            if(simpleIdlingResource!=null){
+                simpleIdlingResource.setIdleState(true);
+            }
         }, this.errorListener);
         retryPolicy(jsonObjReq);
         getReQ().add(jsonObjReq);

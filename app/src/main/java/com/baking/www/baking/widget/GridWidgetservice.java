@@ -1,4 +1,4 @@
-package com.baking.www.baking;
+package com.baking.www.baking.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.baking.www.baking.DataFetchers.dataModels.Recipes;
+import com.baking.www.baking.R;
 
 import static com.baking.www.baking.providers.ContractClass.RecipeEntry.COLUMN_RECIPE_NAME;
 import static com.baking.www.baking.providers.ContractClass.RecipeEntry.CONTENT_URI;

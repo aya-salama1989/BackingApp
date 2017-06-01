@@ -2,6 +2,7 @@ package com.baking.www.baking;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.baking.www.baking.DataFetchers.dataModels.Ingredients;
@@ -30,6 +31,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
     }
@@ -42,7 +48,7 @@ public class MainActivity extends AppCompatActivity
         setToolBar();
         MainFragment mainFragment = new MainFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_frag_holder, mainFragment).commit();
+                .replace(R.id.main_frag_holder, mainFragment).addToBackStack("main_fragment").commitAllowingStateLoss();
     }
 
 

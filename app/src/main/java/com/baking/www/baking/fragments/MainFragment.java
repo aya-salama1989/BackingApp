@@ -3,6 +3,8 @@ package com.baking.www.baking.fragments;
 import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import com.baking.www.baking.DataFetchers.Fetchers.RecipesDataFetcher;
 import com.baking.www.baking.DataFetchers.dataModels.Recipe;
 import com.baking.www.baking.DataFetchers.dataModels.Recipes;
+import com.baking.www.baking.IdlingResource.SimpleIdlingResource;
 import com.baking.www.baking.R;
 import com.baking.www.baking.adapters.RecipesRecyclerAdapter;
 import com.baking.www.baking.utilities.Logging;
@@ -42,6 +45,9 @@ public class MainFragment extends Fragment implements RecipesRecyclerAdapter.OnR
     private RecyclerView.LayoutManager layoutManager;
 
 
+    private SimpleIdlingResource mIdlingResource;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,6 +66,19 @@ public class MainFragment extends Fragment implements RecipesRecyclerAdapter.OnR
         return v;
     }
 
+    @VisibleForTesting
+    @NonNull
+    public SimpleIdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -102,15 +121,16 @@ public class MainFragment extends Fragment implements RecipesRecyclerAdapter.OnR
 
     private void getData() {
         recipesDataFetcher = new RecipesDataFetcher(getActivity(), this);
-        recipesDataFetcher.getRecipes();
+        recipesDataFetcher.getRecipes(mIdlingResource);
     }
 
     @Override
     public void onConnectionDone(Recipes recipes) {
+
         mRecipes.addAll(recipes);
         recipesRecyclerAdapter.notifyDataSetChanged();
 
-        //TODO: Do bulk inset in a background thread
+        //TODO: Do bulk inset in a background thread and for once
         ContentValues[] contentValues = new ContentValues[recipes.size()];
         for (int i = 0; i < recipes.size(); i++) {
             ContentValues contentValue = new ContentValues();
@@ -126,6 +146,11 @@ public class MainFragment extends Fragment implements RecipesRecyclerAdapter.OnR
         }
 
         getContext().getContentResolver().bulkInsert(CONTENT_URI, contentValues);
+
+        if(mIdlingResource!=null){
+            mIdlingResource.setIdleState(true);
+        }
+
     }
 
 

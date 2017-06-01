@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/small"
     android:paddingRight="@dimen/small"
+    android:id="@+id/main_fragment"
     tools:context="com.baking.www.baking.fragments.MainFragment">
 
     <android.support.v7.widget.RecyclerView

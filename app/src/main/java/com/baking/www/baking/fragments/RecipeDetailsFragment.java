@@ -1,8 +1,8 @@
 package com.baking.www.baking.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,15 +23,14 @@ import org.json.JSONException;
 public class RecipeDetailsFragment extends
         Fragment implements StepsRecyclerAdapter.OnStepClickListener {
 
+    public static final int ITEM_INGREDIENT = 0;
+    public static final int ITEM_STEP = 1;
     private static final String RECIPE_KEY = "recipe";
     private static final String INGREDIENTS_KEY = "ingredients";
     private static final String STEPS_KEY = "steps";
-
-    public static final int ITEM_INGREDIENT = 0;
-    public static final int ITEM_STEP = 1;
-
-
     private String mParam1;
+    private String steps;
+    private String mIngredients;
     private Recipe mRecipe;
     private RecyclerView stepsRV;
     private View v;
@@ -58,20 +57,38 @@ public class RecipeDetailsFragment extends
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(RECIPE_KEY, mRecipe);
+        outState.putString(INGREDIENTS_KEY, mIngredients);
+        outState.putString(STEPS_KEY, steps);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-//            mParam1 = getArguments().getParcelable(RECIPE_KEY);
+        if (savedInstanceState != null) {
+            mRecipe = savedInstanceState.getParcelable(RECIPE_KEY);
+            steps = savedInstanceState.getString(STEPS_KEY);
+            mIngredients = savedInstanceState.getString(INGREDIENTS_KEY);
         }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_recipe_details, container, false);
 
-        mRecipe = getArguments().getParcelable(RECIPE_KEY);
-        String steps = getArguments().getString(STEPS_KEY);
+        if (savedInstanceState == null) {
+            mRecipe = getArguments().getParcelable(RECIPE_KEY);
+            steps = getArguments().getString(STEPS_KEY);
+            mIngredients = getArguments().getString(INGREDIENTS_KEY);
+        }else{
+            mRecipe = savedInstanceState.getParcelable(RECIPE_KEY);
+            steps= savedInstanceState.getString(STEPS_KEY);
+            mIngredients = savedInstanceState.getString(INGREDIENTS_KEY);
+        }
 
         try {
             JSONArray stepssJsonArray = new JSONArray(steps);
@@ -79,13 +96,12 @@ public class RecipeDetailsFragment extends
         } catch (JSONException e) {
             Logging.log(e.getMessage());
         }
-
         initViews();
         return v;
     }
 
-    private void initViews() {
 
+    private void initViews() {
         stepsRecyclerAdapter = new StepsRecyclerAdapter(mSteps, this);
         LinearLayoutManager stepsLayoutManager = new LinearLayoutManager(getActivity());
 
@@ -93,7 +109,6 @@ public class RecipeDetailsFragment extends
         stepsRV.setLayoutManager(stepsLayoutManager);
         stepsRV.setAdapter(stepsRecyclerAdapter);
     }
-
 
 
     @Override

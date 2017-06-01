@@ -21,7 +21,7 @@
         </activity>
         <activity android:name=".RecipeDetailsActivity" />
 
-        <receiver android:name=".BackingWidgetProvider">
+        <receiver android:name=".widget.BackingWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -32,12 +32,15 @@
 
         <provider
             android:name=".providers.RecipeProvider"
-            android:authorities="com.baking.www.baking" />
+            android:authorities="com.baking.www.baking"
+            android:exported="true" />
 
         <service
-            android:name=".GridWidgetservice"
-            android:permission="android.permission.BIND_REMOTEVIEWS"
-            android:exported="false" />
+            android:name=".widget.GridWidgetservice"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <activity android:name="com.baking.www.baking.utilities.TestActivity" />
     </application>
 
 </manifest>

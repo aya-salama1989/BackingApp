@@ -10,8 +10,12 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.baking.www.baking.IdlingResource.SimpleIdlingResource;
 import com.baking.www.baking.R;
 import com.baking.www.baking.utilities.Logging;
+
+
+
 
 
 /**
@@ -23,12 +27,22 @@ public class BaseDataFetcher {
     protected Context mContext;
     protected BaseDataFetcherListener mListener;
     private RequestQueue mRequestQueue;
+    public SimpleIdlingResource simpleIdlingResource;
 
     public BaseDataFetcher(Context context, BaseDataFetcherListener mListener) {
         this.mContext = context;
         BaseURL = mContext.getResources().getString(R.string.base_url);
         this.mListener = mListener;
     }
+
+
+    public BaseDataFetcher(Context context, BaseDataFetcherListener mListener, SimpleIdlingResource simpleIdlingResource) {
+        this.mContext = context;
+        BaseURL = mContext.getResources().getString(R.string.base_url);
+        this.mListener = mListener;
+        this.simpleIdlingResource= simpleIdlingResource;
+    }
+
 
     public BaseDataFetcher(Context context) {
         this.mContext = context;

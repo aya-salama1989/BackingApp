@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/recipeItem"
     android:layout_gravity="center"
     android:layout_margin="@dimen/small"
     android:background="@drawable/touch_selector"

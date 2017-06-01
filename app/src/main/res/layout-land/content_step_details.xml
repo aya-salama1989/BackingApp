@@ -1,0 +1,66 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.baking.www.baking.fragments.StepDetailsFragment">
+
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:id="@+id/playerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/parent"
+            app:layout_constraintLeft_toLeftOf="@id/parent"
+            app:layout_constraintRight_toRightOf="@id/parent"
+            app:layout_constraintTop_toTopOf="@id/parent" />
+
+        <TextView
+            android:id="@+id/tv_step_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium"
+            android:padding="@dimen/small"
+            android:textColor="@android:color/black"
+            app:layout_constraintBottom_toTopOf="@+id/next_prev_steps"
+            app:layout_constraintEnd_toEndOf="@id/parent"
+            app:layout_constraintLeft_toLeftOf="@id/parent"
+            app:layout_constraintRight_toRightOf="@id/parent"
+            app:layout_constraintStart_toStartOf="@id/parent"
+            app:layout_constraintTop_toBottomOf="@+id/playerView" />
+
+
+        <LinearLayout
+            android:id="@+id/next_prev_steps"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/parent"
+            app:layout_constraintEnd_toEndOf="@id/parent"
+            app:layout_constraintLeft_toLeftOf="@id/parent"
+            app:layout_constraintRight_toRightOf="@id/parent"
+            app:layout_constraintStart_toStartOf="@id/parent">
+
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/previous" />
+
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/next" />
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>
