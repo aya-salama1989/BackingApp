@@ -34,8 +34,8 @@ public class FragmentTestRule<F extends Fragment> extends ActivityTestRule<TestA
                 FragmentTransaction transaction = manager.beginTransaction();
                 mFragment = mFragmentClass.newInstance();
                 transaction.replace(R.id.main_frag_holder, mFragment);
-                transaction.commit();
-            } catch (InstantiationException  e) {
+                transaction.commitAllowingStateLoss();
+            } catch (InstantiationException e) {
                 Assert.fail(String.format("%s: Could not insert %s into TestActivity: %s",
                         getClass().getSimpleName(),
                         mFragmentClass.getSimpleName(),
@@ -48,7 +48,8 @@ public class FragmentTestRule<F extends Fragment> extends ActivityTestRule<TestA
             }
         });
     }
-    public F getFragment(){
+
+    public F getFragment() {
         return mFragment;
     }
 }

@@ -42,11 +42,23 @@ public class MyFragmentTest {
 
 //        onView(withId(R.id.an_id_in_the_fragment)).check(matches(isDisplayed()));
 
-        onView(withId(R.id.main_fragment)).check(matches(isDisplayed()));
-        onView(withId(R.id.rv_recipes)).check(matches(isDisplayed()));
         mIdlingResource = mFragmentTestRule.getFragment().getIdlingResource();
 //        // To prove that the test fails, omit this call:
         Espresso.registerIdlingResources(mIdlingResource);
+    }
+
+    @Test
+    public void fragment_is_instantiated() {
+
+        onView(withId(R.id.main_fragment)).check(matches(isDisplayed()));
+
+    }
+
+    @Test
+    public void recycler_is_instantiated() {
+
+        onView(withId(R.id.rv_recipes)).check(matches(isDisplayed()));
+
     }
 
     @Test
