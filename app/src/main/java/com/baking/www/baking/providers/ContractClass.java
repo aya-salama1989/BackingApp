@@ -27,14 +27,14 @@ public class ContractClass {
     public static final long INVALID_RECIPE_ID = -1;
 
     public static final String CREATE_TABLA_RECIPES = "create table " + TABLE_NAME + "("
-            + COLUMN_RECIPE_ID + " INTEGER PRIMARY KEY, " + COLUMN_RECIPE_NAME + " TEXT, "
+            + COLUMN_RECIPE_ID + " INTEGER, " + COLUMN_RECIPE_NAME + " TEXT, "
             + COLUMN_RECIPE_INGREDIENTS + " TEXT, " + COLUMN_RECIPE_STEPS + " TEXT, "
             + COLUMN_RECIPE_SERVINGS + " INTEGER, " + COLUMN_RECIPE_IMAGE + " TEXT);";
     public static final String EXTRA_RECIPE_ID = "extra_recipe_id";
 
     public static final class RecipeEntry implements BaseColumns {
 
-        public static final Uri CONTENT_URI =
+        public static final Uri RECIPES_CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_RECIPES).build();
 
         public static final String CONTENT_TYPE =

@@ -84,6 +84,7 @@ public class StepsRecyclerAdapter extends RecyclerView.Adapter<StepsRecyclerAdap
             stepTitle = (TextView) itemView.findViewById(R.id.tv_step);
             headerTxtVue = (TextView) itemView.findViewById(R.id.tv_step_header);
             itemView.setOnClickListener(this);
+            itemView.setOnTouchListener(this);
         }
 
         public void setData(Step step) {
@@ -98,22 +99,17 @@ public class StepsRecyclerAdapter extends RecyclerView.Adapter<StepsRecyclerAdap
         @Override
         public void onClick(View v) {
             onStepClickListener.onStepItemClick(getAdapterPosition());
-            if (v.isEnabled()) {
-                v.setBackgroundColor(Color.parseColor("#3F51B5"));
-            } else {
-                v.setBackgroundColor(Color.parseColor("#ffffff"));
-            }
         }
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-
-
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 v.setBackgroundColor(Color.parseColor("#3F51B5"));
+                v.setSelected(true);
             }
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                v.setBackgroundColor(Color.WHITE);
+                v.setBackgroundColor(Color.TRANSPARENT);
+                v.setSelected(false);
             }
             return false;
         }
@@ -122,6 +118,5 @@ public class StepsRecyclerAdapter extends RecyclerView.Adapter<StepsRecyclerAdap
     private class VIEW_TYPES {
         public static final int Header = 1;
         public static final int Normal = 2;
-//        public static final int Footer = 3;
     }
 }

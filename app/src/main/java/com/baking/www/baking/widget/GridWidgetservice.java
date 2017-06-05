@@ -4,21 +4,24 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import com.baking.www.baking.DataFetchers.dataModels.Recipes;
+import com.baking.www.baking.DataFetchers.dataModels.Ingredients;
 import com.baking.www.baking.R;
 
-import static com.baking.www.baking.providers.ContractClass.RecipeEntry.COLUMN_RECIPE_NAME;
-import static com.baking.www.baking.providers.ContractClass.RecipeEntry.CONTENT_URI;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import static com.baking.www.baking.providers.ContractClass.RecipeEntry.COLUMN_RECIPE_INGREDIENTS;
+import static com.baking.www.baking.providers.ContractClass.RecipeEntry.RECIPES_CONTENT_URI;
 
 /**
  * Created by Dell on 26/05/2017.
  */
 
 public class GridWidgetservice extends RemoteViewsService {
+
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -31,8 +34,8 @@ class GridRemoteViewFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context mContext;
     private Cursor mCursor;
     private int mAppWidgetId;
-    private Recipes mRecipes;
 
+    private Ingredients ingredients;
 
     public GridRemoteViewFactory(Context context, Intent intent) {
         this.mContext = context;
@@ -47,7 +50,17 @@ class GridRemoteViewFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDataSetChanged() {
-        mCursor = mContext.getContentResolver().query(CONTENT_URI, null, null, null, null);
+        mCursor = mContext.getContentResolver().query(RECIPES_CONTENT_URI, null, null, null, null);
+        if (mCursor == null || mCursor.getCount() == 0) return;
+        mCursor.moveToFirst();
+        String ingredientsString = mCursor.getString(mCursor.getColumnIndex(COLUMN_RECIPE_INGREDIENTS));
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = new JSONArray(ingredientsString);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ingredients = new Ingredients(jsonArray);
     }
 
     @Override
@@ -58,27 +71,15 @@ class GridRemoteViewFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public int getCount() {
         if (mCursor == null) return 0;
-        return mCursor.getCount();
+        return ingredients.size();
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
-        if (mCursor == null || mCursor.getCount() == 0) return null;
-        mCursor.moveToPosition(position);
+
         RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.item_recipe_widget);
-
-        String recipeTitle = mCursor.getString(mCursor.getColumnIndex(COLUMN_RECIPE_NAME));
-//        String imageUrl = mCursor.getString(mCursor.getColumnIndex(COLUMN_RECIPE_IMAGE));
-
-        views.setImageViewResource(R.id.widget_image, R.drawable.exo_controls_play);
-        views.setTextViewText(R.id.widget_text, recipeTitle);
-
-        // Fill in the onClick PendingIntent Template using the specific plant Id for each item individually
-        Bundle extras = new Bundle();
-//        extras.putLong(PlantDetailActivity.EXTRA_RECIPE_ID, plantId);
-        Intent fillInIntent = new Intent();
-        fillInIntent.putExtras(extras);
-        views.setOnClickFillInIntent(R.id.widget_image, fillInIntent);
+//        String ingredientsString = mCursor.getString(mCursor.getColumnIndex(COLUMN_RECIPE_INGREDIENTS));
+        views.setTextViewText(R.id.widget_text, ingredients.get(position).getIngredient());
         return views;
     }
 

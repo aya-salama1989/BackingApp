@@ -24,11 +24,9 @@ public class RecipeDetailsFragment extends
         Fragment implements StepsRecyclerAdapter.OnStepClickListener {
 
     public static final int ITEM_INGREDIENT = 0;
-    public static final int ITEM_STEP = 1;
     private static final String RECIPE_KEY = "recipe";
     private static final String INGREDIENTS_KEY = "ingredients";
     private static final String STEPS_KEY = "steps";
-    private String mParam1;
     private String steps;
     private String mIngredients;
     private Recipe mRecipe;

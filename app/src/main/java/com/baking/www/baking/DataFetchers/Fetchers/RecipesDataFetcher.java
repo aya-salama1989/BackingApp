@@ -1,6 +1,7 @@
 package com.baking.www.baking.DataFetchers.Fetchers;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.baking.www.baking.DataFetchers.dataModels.Recipes;
@@ -18,7 +19,7 @@ public class RecipesDataFetcher extends BaseDataFetcher {
         super(context, mListener);
     }
 
-    public void getRecipes(SimpleIdlingResource simpleIdlingResource) {
+    public void getRecipes(@Nullable SimpleIdlingResource simpleIdlingResource) {
         if(simpleIdlingResource!=null){
             simpleIdlingResource.setIdleState(false);
 

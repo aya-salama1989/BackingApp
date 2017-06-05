@@ -1,14 +1,18 @@
 package com.baking.www.baking.providers;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import com.baking.www.baking.utilities.Logging;
 
 import static com.baking.www.baking.providers.ContractClass.AUTHORITY;
 import static com.baking.www.baking.providers.ContractClass.INVALID_RECIPE_ID;
@@ -16,6 +20,7 @@ import static com.baking.www.baking.providers.ContractClass.PATH_RECIPES;
 import static com.baking.www.baking.providers.ContractClass.RecipeEntry.COLUMN_RECIPE_ID;
 import static com.baking.www.baking.providers.ContractClass.RecipeEntry.CONTENT_ITEM_TYPE;
 import static com.baking.www.baking.providers.ContractClass.RecipeEntry.CONTENT_TYPE;
+import static com.baking.www.baking.providers.ContractClass.RecipeEntry.RECIPES_CONTENT_URI;
 import static com.baking.www.baking.providers.ContractClass.RecipeEntry.TABLE_NAME;
 import static com.baking.www.baking.providers.DBHelper.getDataBaseInstance;
 
@@ -142,22 +147,69 @@ public class RecipeProvider extends ContentProvider {
 
         switch (match) {
             case RECIPES:
+                long id = sqLiteDatabase.insert(TABLE_NAME, null, values);
+                if (id > 0) {
+                    returnedUri = ContentUris.withAppendedId(RECIPES_CONTENT_URI, id);
+                } else {
+                    throw new SQLiteException("Unsupported insert into: " + uri);
+                }
                 break;
-            case RECIPE_WITH_ID:
-                break;
+
             default:
         }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+        Logging.longToast(getContext(), returnedUri.toString());
         return returnedUri;
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        int numRowsDeleted;
+        if (null == selection) selection = "1";
+        switch (sUriMatcher.match(uri)) {
+            case RECIPES:
+                numRowsDeleted = recipeDBHelper.getWritableDatabase().delete(
+                        TABLE_NAME,
+                        selection,
+                        selectionArgs);
+
+                break;
+            case RECIPE_WITH_ID:
+                String id = uri.getPathSegments().get(1);
+                numRowsDeleted = recipeDBHelper.getWritableDatabase().delete(
+                        TABLE_NAME,
+                        COLUMN_RECIPE_ID + "=?",
+                        new String[]{id});
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        if (numRowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return numRowsDeleted;
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values,
                       @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        int count = 0;
+        switch (sUriMatcher.match(uri)) {
+            case RECIPES:
+                count = recipeDBHelper.getWritableDatabase().update(TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case RECIPE_WITH_ID:
+                count = recipeDBHelper.getWritableDatabase().update(TABLE_NAME, values,
+                        selection, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+        return count;
     }
 }

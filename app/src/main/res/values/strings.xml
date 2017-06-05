@@ -19,4 +19,6 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="recipe">Recipe</string>
+    <string name="action_setRecipe">Set in home</string>
+    <string name="no_video">There is no video or images for this step</string>
 </resources>

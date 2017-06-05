@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.baking.www.baking.DataFetchers.dataModels.Step;
@@ -25,23 +26,34 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Dell on 28/05/2017.
  */
 
-public class StepDetailsFragmentsArray extends Fragment {
+public class StepDetailsChildFragment extends Fragment {
 
     private static final String ARG_STEP_DATA = "step";
     private static final String ARG_FRAGMENT_POSITION = "fragment_position";
+    @BindView(R.id.playerView)
+    SimpleExoPlayerView simpleExoPlayerView;
+    @BindView(R.id.tv_step_description)
+    TextView stepTV;
+    @BindView(R.id.no_video_holder)
+    TextView emptyVideoHolder;
+
+    @BindView(R.id.imageView)
+    ImageView imageView;
 
     private View v;
-    private SimpleExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer mExoPlayer;
-    private TextView stepTV;
 
     public static Fragment newInstance(int position, Step step) {
-        StepDetailsFragmentsArray f = new StepDetailsFragmentsArray();
+        StepDetailsChildFragment f = new StepDetailsChildFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_FRAGMENT_POSITION, position);
         args.putParcelable(ARG_STEP_DATA, step);
@@ -53,17 +65,32 @@ public class StepDetailsFragmentsArray extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.content_step_details, container, false);
+        ButterKnife.bind(this, v);
         initViews();
         return v;
     }
 
     private void initViews() {
-        stepTV = (TextView) v.findViewById(R.id.tv_step_description);
-        simpleExoPlayerView = (SimpleExoPlayerView) v.findViewById(R.id.playerView);
-        simpleExoPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(), R.drawable.img_placeholder));
         Step step = getArguments().getParcelable(ARG_STEP_DATA);
         Logging.log(step.getVideoURL());
-        initializePlayer(Uri.parse(step.getVideoURL()));
+        if (step.getVideoURL() != null & !step.getVideoURL().isEmpty()) {
+            initializePlayer(Uri.parse(step.getVideoURL()));
+            simpleExoPlayerView.setVisibility(View.VISIBLE);
+            emptyVideoHolder.setVisibility(View.INVISIBLE);
+            imageView.setVisibility(View.INVISIBLE);
+        } else if (step.getThumbnailURL() != null & !step.getThumbnailURL().isEmpty()) {
+            Picasso.with(getActivity()).load(step.getThumbnailURL())
+                    .error(R.drawable.img_placeholder)
+                    .placeholder(R.drawable.img_placeholder).into(imageView);
+            simpleExoPlayerView.setVisibility(View.INVISIBLE);
+            emptyVideoHolder.setVisibility(View.INVISIBLE);
+            imageView.setVisibility(View.VISIBLE);
+        } else {
+            simpleExoPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(getResources(),
+                    R.drawable.img_placeholder));
+            simpleExoPlayerView.setVisibility(View.INVISIBLE);
+            emptyVideoHolder.setVisibility(View.VISIBLE);
+        }
         stepTV.setText(step.getDescription());
     }
 
@@ -84,9 +111,11 @@ public class StepDetailsFragmentsArray extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        releasePlayer();
-        super.onDestroyView();
+    public void onDetach() {
+        super.onDetach();
+        if (mExoPlayer != null)
+            releasePlayer();
+
     }
 
     private void releasePlayer() {

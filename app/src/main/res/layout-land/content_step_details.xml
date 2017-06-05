@@ -9,16 +9,52 @@
         android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.baking.www.baking.fragments.StepDetailsFragment">
+        tools:context="com.baking.www.baking.fragments.StepDetailsParentFragment">
 
-        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-            android:id="@+id/playerView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@id/parent"
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/horizontalHalf"
             app:layout_constraintLeft_toLeftOf="@id/parent"
             app:layout_constraintRight_toRightOf="@id/parent"
-            app:layout_constraintTop_toTopOf="@id/parent" />
+            app:layout_constraintTop_toTopOf="@id/parent">
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/frameLayout"
+                app:layout_constraintLeft_toLeftOf="@id/frameLayout"
+                app:layout_constraintRight_toRightOf="@id/frameLayout"
+                app:layout_constraintTop_toTopOf="@id/frameLayout" />
+
+            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                android:id="@+id/playerView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/frameLayout"
+                app:layout_constraintLeft_toLeftOf="@id/frameLayout"
+                app:layout_constraintRight_toRightOf="@id/frameLayout"
+                app:layout_constraintTop_toTopOf="@id/frameLayout" />
+            <TextView
+                android:id="@+id/no_video_holder"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/no_video" />
+        </FrameLayout>
+
+
+        <android.support.constraint.Guideline
+            android:id="@+id/horizontalHalf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="1" />
 
         <TextView
             android:id="@+id/tv_step_description"
@@ -32,35 +68,8 @@
             app:layout_constraintLeft_toLeftOf="@id/parent"
             app:layout_constraintRight_toRightOf="@id/parent"
             app:layout_constraintStart_toStartOf="@id/parent"
-            app:layout_constraintTop_toBottomOf="@+id/playerView" />
+            app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 
-
-        <LinearLayout
-            android:id="@+id/next_prev_steps"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/parent"
-            app:layout_constraintEnd_toEndOf="@id/parent"
-            app:layout_constraintLeft_toLeftOf="@id/parent"
-            app:layout_constraintRight_toRightOf="@id/parent"
-            app:layout_constraintStart_toStartOf="@id/parent">
-
-            <Button
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/previous" />
-
-            <Button
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/next" />
-        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

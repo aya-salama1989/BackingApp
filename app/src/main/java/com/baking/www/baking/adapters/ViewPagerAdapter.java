@@ -12,12 +12,12 @@ import java.util.List;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private List<Fragment> fragments;
-    private int stepPosition;
 
-    public ViewPagerAdapter(FragmentManager fm, List<Fragment> fragments, int stepPosition) {
+
+    public ViewPagerAdapter(FragmentManager fm, List<Fragment> fragments) {
         super(fm);
         this.fragments = fragments;
-        this.stepPosition = stepPosition;
+
     }
 
     @Override

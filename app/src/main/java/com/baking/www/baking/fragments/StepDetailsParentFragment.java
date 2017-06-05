@@ -2,12 +2,12 @@ package com.baking.www.baking.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.baking.www.baking.DataFetchers.dataModels.Steps;
 import com.baking.www.baking.R;
@@ -23,27 +23,36 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.baking.www.baking.MainActivity.mTwoPanel;
 
-public class StepDetailsFragment extends Fragment {
+
+public class StepDetailsParentFragment extends Fragment {
 
     private static final String ARG_STEP_DATA = "step_data";
     private static final String ARG_STEP_POSITION = "step_position";
 
+    @BindView(R.id.next_prev_steps)
+    LinearLayout linearLayout;
+
     @BindView(R.id.vp_steps)
     ViewPager viewPager;
+
     @BindView(R.id.btn_next)
     Button btnNext;
+
     @BindView(R.id.btn_previous)
     Button btnPrevious;
+
     private ViewPagerAdapter viewPagerAdapter;
     private View v;
+    private Steps steps;
 
-    public StepDetailsFragment() {
+    public StepDetailsParentFragment() {
         // Required empty public constructor
     }
 
-    public static StepDetailsFragment newInstance(String steps, int stepPosition) {
-        StepDetailsFragment fragment = new StepDetailsFragment();
+    public static StepDetailsParentFragment newInstance(String steps, int stepPosition) {
+        StepDetailsParentFragment fragment = new StepDetailsParentFragment();
         Bundle args = new Bundle();
         args.putString(ARG_STEP_DATA, steps);
         args.putInt(ARG_STEP_POSITION, stepPosition);
@@ -51,14 +60,6 @@ public class StepDetailsFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_STEP_DATA);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,7 +71,6 @@ public class StepDetailsFragment extends Fragment {
         return v;
     }
 
-   private Steps steps;
     private void initViews() {
         JSONArray jsonArray;
 
@@ -82,24 +82,29 @@ public class StepDetailsFragment extends Fragment {
         }
 
         //TODO: send step position
-        viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList(steps),
-                getArguments().getInt(ARG_STEP_POSITION));
+        viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList(steps));
         viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setCurrentItem(getArguments().getInt(ARG_STEP_POSITION));
 
-        btnNext.setOnClickListener((View v) -> {
-            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-        });
+        if (mTwoPanel) {
+            linearLayout.setVisibility(View.GONE);
+        } else {
+            linearLayout.setVisibility(View.VISIBLE);
+            btnNext.setOnClickListener((View v) -> {
+                viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+            });
 
-        btnPrevious.setOnClickListener((View v) -> {
-            viewPager.setCurrentItem(viewPager.getCurrentItem()  + 1);
-        });
+            btnPrevious.setOnClickListener((View v) -> {
+                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+            });
+        }
     }
 
 
-    private List<Fragment> fragmentList(Steps steps){
+    private List<Fragment> fragmentList(Steps steps) {
         List<Fragment> list = new ArrayList<>();
-        for(int i = 0; i<steps.size();i++){
-            list.add(StepDetailsFragmentsArray.newInstance(i, steps.get(i)));
+        for (int i = 0; i < steps.size(); i++) {
+            list.add(StepDetailsChildFragment.newInstance(i, steps.get(i)));
         }
         return list;
     }
