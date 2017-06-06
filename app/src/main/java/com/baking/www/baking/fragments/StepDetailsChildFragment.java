@@ -111,12 +111,13 @@ public class StepDetailsChildFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onPause() {
+        super.onPause();
         if (mExoPlayer != null)
             releasePlayer();
 
     }
+
 
     private void releasePlayer() {
         mExoPlayer.stop();
