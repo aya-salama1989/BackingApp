@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,31 +9,35 @@
     android:layout_gravity="center"
     android:layout_margin="@dimen/small"
     android:background="@drawable/touch_selector"
-    android:elevation="@dimen/x_small">
+    app:elevation="@dimen/x_small">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/medium"
         android:gravity="center"
+        android:padding="@dimen/small"
         android:orientation="vertical">
 
         <ImageView
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/img_recipe"
             android:layout_width="@dimen/image_width"
             android:layout_height="@dimen/image_height"
+            android:layout_marginEnd="@dimen/small"
             android:background="@drawable/img_placeholder" />
 
         <TextView
+            app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/tv_recipe_name"
             android:layout_width="0dp"
+            android:gravity="start"
             android:layout_height="wrap_content"
-            android:gravity="left"
-            android:padding="@dimen/small"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/x_large"
-            app:layout_constraintEnd_toEndOf="@id/parent"
+            android:textSize="@dimen/font_x_large"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/img_recipe"
             tools:text="@string/app_name" />
 
@@ -41,12 +45,12 @@
             android:id="@+id/tv_servings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="start"
             android:paddingBottom="@dimen/xx_small"
-            android:paddingLeft="@dimen/small"
+            app:paddingStart="@dimen/small"
             android:paddingTop="@dimen/xx_small"
             android:text="@string/servings_holder"
-            android:textSize="@dimen/medium"
+            android:textSize="@dimen/font_l_medium"
             app:layout_constraintEnd_toEndOf="@id/parent"
             app:layout_constraintStart_toEndOf="@id/img_recipe"
             app:layout_constraintTop_toBottomOf="@+id/tv_recipe_name" />
@@ -55,12 +59,12 @@
             android:id="@+id/tv_ingredients"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="start"
             android:paddingBottom="@dimen/xx_small"
-            android:paddingLeft="@dimen/small"
+            app:paddingStart="@dimen/small"
             android:paddingTop="@dimen/xx_small"
             android:text="@string/ingredients_holder"
-            android:textSize="@dimen/medium"
+            android:textSize="@dimen/font_medium"
             app:layout_constraintEnd_toEndOf="@id/parent"
             app:layout_constraintStart_toEndOf="@id/img_recipe"
             app:layout_constraintTop_toBottomOf="@+id/tv_servings" />
@@ -69,15 +73,15 @@
             android:id="@+id/tv_steps"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="start"
             android:paddingBottom="@dimen/xx_small"
-            android:paddingLeft="@dimen/small"
+            app:paddingStart="@dimen/small"
             android:paddingTop="@dimen/xx_small"
             android:text="@string/steps_holder"
-            android:textSize="@dimen/medium"
+            android:textSize="@dimen/font_medium"
             app:layout_constraintEnd_toEndOf="@id/parent"
             app:layout_constraintStart_toEndOf="@id/img_recipe"
             app:layout_constraintTop_toBottomOf="@+id/tv_ingredients" />
 
-    </android.support.constraint.ConstraintLayout>
-</android.support.v7.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

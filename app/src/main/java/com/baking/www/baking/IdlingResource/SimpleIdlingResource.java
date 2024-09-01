@@ -16,9 +16,8 @@
 
 package com.baking.www.baking.IdlingResource;
 
-import android.support.annotation.Nullable;
-import android.support.test.espresso.IdlingResource;
 
+import androidx.test.espresso.IdlingResource;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -30,7 +29,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SimpleIdlingResource implements IdlingResource {
 
-    @Nullable
     private volatile ResourceCallback mCallback;
 
     // Idleness is controlled with this boolean.

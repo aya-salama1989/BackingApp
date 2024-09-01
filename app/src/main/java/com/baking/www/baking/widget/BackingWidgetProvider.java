@@ -19,10 +19,9 @@ public class BackingWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        for (int i = 0; i < appWidgetIds.length; ++i) {
-
+        for (int appWidgetId : appWidgetIds) {
             Intent intent = new Intent(context, GridWidgetservice.class);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
             RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.collection_widget_provider);
             rv.setRemoteAdapter(R.id.widget_grid, intent);
@@ -30,9 +29,9 @@ public class BackingWidgetProvider extends AppWidgetProvider {
 
             // Create an Intent to launch ExampleActivity
             Intent clickIntent = new Intent(context, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, clickIntent, 0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, clickIntent, PendingIntent.FLAG_IMMUTABLE);
             rv.setOnClickPendingIntent(R.id.main_widget, pendingIntent);
-            appWidgetManager.updateAppWidget(appWidgetIds[i], rv);
+            appWidgetManager.updateAppWidget(appWidgetId, rv);
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
@@ -40,7 +39,7 @@ public class BackingWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-//        Logging.log(intent.getStringExtra("recipe_title"));
+        Logging.log(intent.getStringExtra("recipe_title"));
     }
 
     @Override

@@ -9,8 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
 
 import com.baking.www.baking.utilities.Logging;
 
@@ -23,6 +22,9 @@ import static com.baking.www.baking.providers.ContractClass.RecipeEntry.CONTENT_
 import static com.baking.www.baking.providers.ContractClass.RecipeEntry.RECIPES_CONTENT_URI;
 import static com.baking.www.baking.providers.ContractClass.RecipeEntry.TABLE_NAME;
 import static com.baking.www.baking.providers.DBHelper.getDataBaseInstance;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Created by Dell on 25/05/2017.
@@ -112,29 +114,27 @@ public class RecipeProvider extends ContentProvider {
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         SQLiteDatabase sqLiteDatabase = recipeDBHelper.getWritableDatabase();
 
-        switch (sUriMatcher.match(uri)) {
-            case RECIPES:
-                sqLiteDatabase.beginTransaction();
-                int rowsInserted = 0;
-                try {
-                    for (ContentValues value : values) {
-                        long id = sqLiteDatabase.insert(TABLE_NAME, null, value);
-                        if (id != INVALID_RECIPE_ID) {
-                            rowsInserted++;
-                        }
+        if (sUriMatcher.match(uri) == RECIPES) {
+            sqLiteDatabase.beginTransaction();
+            int rowsInserted = 0;
+            try {
+                for (ContentValues value : values) {
+                    long id = sqLiteDatabase.insert(TABLE_NAME, null, value);
+                    if (id != INVALID_RECIPE_ID) {
+                        rowsInserted++;
                     }
-                    sqLiteDatabase.setTransactionSuccessful();
-                } finally {
-                    sqLiteDatabase.endTransaction();
                 }
+                sqLiteDatabase.setTransactionSuccessful();
+            } finally {
+                sqLiteDatabase.endTransaction();
+            }
 
-                if (rowsInserted > 0) {
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                return rowsInserted;
-            default:
-                return super.bulkInsert(uri, values);
+            if (rowsInserted > 0) {
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
+            return rowsInserted;
         }
+        return super.bulkInsert(uri, values);
     }
 
     @Nullable
@@ -145,17 +145,13 @@ public class RecipeProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         Uri returnedUri = null;
 
-        switch (match) {
-            case RECIPES:
-                long id = sqLiteDatabase.insert(TABLE_NAME, null, values);
-                if (id > 0) {
-                    returnedUri = ContentUris.withAppendedId(RECIPES_CONTENT_URI, id);
-                } else {
-                    throw new SQLiteException("Unsupported insert into: " + uri);
-                }
-                break;
-
-            default:
+        if (match == RECIPES) {
+            long id = sqLiteDatabase.insert(TABLE_NAME, null, values);
+            if (id > 0) {
+                returnedUri = ContentUris.withAppendedId(RECIPES_CONTENT_URI, id);
+            } else {
+                throw new SQLiteException("Unsupported insert into: " + uri);
+            }
         }
 
         getContext().getContentResolver().notifyChange(uri, null);
@@ -196,14 +192,11 @@ public class RecipeProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values,
                       @Nullable String selection, @Nullable String[] selectionArgs) {
-        int count = 0;
+        int count;
         switch (sUriMatcher.match(uri)) {
             case RECIPES:
-                count = recipeDBHelper.getWritableDatabase().update(TABLE_NAME, values, selection, selectionArgs);
-                break;
             case RECIPE_WITH_ID:
-                count = recipeDBHelper.getWritableDatabase().update(TABLE_NAME, values,
-                        selection, selectionArgs);
+                count = recipeDBHelper.getWritableDatabase().update(TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);

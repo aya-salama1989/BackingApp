@@ -2,10 +2,6 @@ package com.baking.www.baking;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
 import com.baking.www.baking.DataFetchers.Fetchers.RecipesDataFetcher;
 import com.baking.www.baking.DataFetchers.dataModels.Ingredients;
@@ -15,6 +11,10 @@ import com.baking.www.baking.DataFetchers.dataModels.Steps;
 import com.baking.www.baking.adapters.RecipesRecyclerAdapter;
 import com.baking.www.baking.utilities.Logging;
 import com.google.gson.Gson;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -24,6 +24,11 @@ import static com.baking.www.baking.utilities.InternetConnectivity.checkOnlineSt
 public class MainActivity extends AppCompatActivity
         implements RecipesRecyclerAdapter.OnRecipeItemSelected,
         RecipesDataFetcher.RecipesFetcherDataListener {
+
+    public static String BUNDLE_KEY_RECIPE = "recipe";
+    public static String BUNDLE_KEY_INGREDIENTS = "ingredients";
+    public static String BUNDLE_KEY_STEPS = "steps";
+
 
     public static boolean mTwoPanel;
 
@@ -109,17 +114,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onItemSelected(int itemPosition) {
         Recipe recipe = mRecipes.get(itemPosition);
-        if (mRecipes != null) {
-            Intent intent = new Intent(this, RecipeDetailsActivity.class);
-            Ingredients ingredients = recipe.getIngredients();
-            Steps steps = recipe.getSteps();
-            intent.putExtra("recipe", recipe);
-            Gson gson = new Gson();
-            String ingredientsJson = gson.toJson(ingredients);
-            String stepsJson = gson.toJson(steps);
-            intent.putExtra("ingredients", ingredientsJson);
-            intent.putExtra("steps", stepsJson);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(this, RecipeDetailsActivity.class);
+        Ingredients ingredients = recipe.getIngredients();
+        Steps steps = recipe.getSteps();
+        intent.putExtra(BUNDLE_KEY_RECIPE, recipe);
+        Gson gson = new Gson();
+        String ingredientsJson = gson.toJson(ingredients);
+        String stepsJson = gson.toJson(steps);
+        intent.putExtra(BUNDLE_KEY_INGREDIENTS, ingredientsJson);
+        intent.putExtra(BUNDLE_KEY_STEPS, stepsJson);
+        startActivity(intent);
     }
 }

@@ -1,12 +1,14 @@
 package com.baking.www.baking.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.baking.www.baking.DataFetchers.dataModels.Recipe;
 import com.baking.www.baking.DataFetchers.dataModels.Recipes;
@@ -18,8 +20,8 @@ import com.squareup.picasso.Picasso;
  */
 
 public class RecipesRecyclerAdapter extends RecyclerView.Adapter<RecipesRecyclerAdapter.RecipesViewHolder> {
-    private OnRecipeItemSelected onRecipeItemSelected;
-    private Recipes recipes;
+    private final OnRecipeItemSelected onRecipeItemSelected;
+    private final Recipes recipes;
     private RecipesViewHolder recipesViewHolder;
     private Context context;
 
@@ -40,7 +42,7 @@ public class RecipesRecyclerAdapter extends RecyclerView.Adapter<RecipesRecycler
     }
 
     @Override
-    public void onBindViewHolder(RecipesViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecipesViewHolder holder, int position) {
         Recipe recipe = recipes.get(position);
         recipesViewHolder.setDatat(recipe);
     }
@@ -56,17 +58,17 @@ public class RecipesRecyclerAdapter extends RecyclerView.Adapter<RecipesRecycler
     }
 
     class RecipesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private ImageView recipeImage;
-        private TextView recipeName, servingsNum, ingrediengtsNum, stepsNum;
+        private final ImageView recipeImage;
+
+        private final TextView ingrediengtsNum, servingsNum, recipeName, stepsNum;
 
         public RecipesViewHolder(View itemView) {
             super(itemView);
-            recipeImage = (ImageView) itemView.findViewById(R.id.img_recipe);
-            recipeName = (TextView) itemView.findViewById(R.id.tv_recipe_name);
-            servingsNum = (TextView) itemView.findViewById(R.id.tv_servings);
-            ingrediengtsNum = (TextView) itemView.findViewById(R.id.tv_ingredients);
-            stepsNum = (TextView) itemView.findViewById(R.id.tv_steps);
-
+            recipeImage = itemView.findViewById(R.id.img_recipe);
+            recipeName = itemView.findViewById(R.id.tv_recipe_name);
+            servingsNum = itemView.findViewById(R.id.tv_servings);
+            ingrediengtsNum = itemView.findViewById(R.id.tv_ingredients);
+            stepsNum = itemView.findViewById(R.id.tv_steps);
             itemView.setOnClickListener(this);
         }
 

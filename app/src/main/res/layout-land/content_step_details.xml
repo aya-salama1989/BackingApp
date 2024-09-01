@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,7 +29,7 @@
                 app:layout_constraintRight_toRightOf="@id/frameLayout"
                 app:layout_constraintTop_toTopOf="@id/frameLayout" />
 
-            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            <androidx.media3.exoplayer.video.spherical.SphericalGLSurfaceView
                 android:id="@+id/playerView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
         </FrameLayout>
 
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/horizontalHalf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -71,5 +71,5 @@
             app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

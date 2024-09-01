@@ -13,10 +13,7 @@ public class InternetConnectivity {
         ConnectivityManager CManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo NInfo = CManager.getActiveNetworkInfo();
-        if (NInfo != null && NInfo.isConnectedOrConnecting()) {
-            return true;
-        }
-        return false;
+        return NInfo != null && NInfo.isConnectedOrConnecting();
     }
 
 }

@@ -1,8 +1,6 @@
 package com.baking.www.baking.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +18,10 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 import static com.baking.www.baking.MainActivity.mTwoPanel;
+
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 
 public class StepDetailsParentFragment extends Fragment {
@@ -31,20 +29,9 @@ public class StepDetailsParentFragment extends Fragment {
     private static final String ARG_STEP_DATA = "step_data";
     private static final String ARG_STEP_POSITION = "step_position";
 
-    @BindView(R.id.next_prev_steps)
-    LinearLayout linearLayout;
 
-    @BindView(R.id.vp_steps)
-    ViewPager viewPager;
-
-    @BindView(R.id.btn_next)
-    Button btnNext;
-
-    @BindView(R.id.btn_previous)
-    Button btnPrevious;
-
-    private ViewPagerAdapter viewPagerAdapter;
     private View v;
+    private ViewPager viewPager ;
     private Steps steps;
 
     public StepDetailsParentFragment() {
@@ -66,12 +53,16 @@ public class StepDetailsParentFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_step_details, container, false);
-        ButterKnife.bind(this, v);
         initViews();
         return v;
     }
 
     private void initViews() {
+        LinearLayout linearLayout = v.findViewById(R.id.next_prev_steps);
+        viewPager = v.findViewById(R.id.vp_steps);
+        Button btnNext = v.findViewById(R.id.btn_next);
+        Button btnPrevious = v.findViewById(R.id.btn_previous);
+
         JSONArray jsonArray;
 
         try {
@@ -82,7 +73,7 @@ public class StepDetailsParentFragment extends Fragment {
         }
 
         //TODO: send step position
-        viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList(steps));
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList(steps));
         viewPager.setAdapter(viewPagerAdapter);
         viewPager.setCurrentItem(getArguments().getInt(ARG_STEP_POSITION));
 
