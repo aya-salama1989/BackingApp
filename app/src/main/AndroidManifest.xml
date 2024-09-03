@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
     <uses-permission android:name="android.permission.INTERNET" />
-
 
     <application
         android:allowBackup="true"
@@ -19,8 +17,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecipeDetailsActivity"
-           />
+        <activity android:name=".RecipeDetailsActivity" />
 
         <receiver android:name=".widget.BackingWidgetProvider"
             android:exported="true">
@@ -38,10 +35,9 @@
             android:exported="true" />
 
         <service
-            android:name=".widget.GridWidgetservice"
+            android:name=".widget.GridWidgetService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>
-
 </manifest>

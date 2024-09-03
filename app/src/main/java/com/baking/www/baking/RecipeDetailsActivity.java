@@ -31,13 +31,14 @@ import com.baking.www.baking.DataFetchers.dataModels.Recipe;
 import com.baking.www.baking.fragments.IngredientsFragment;
 import com.baking.www.baking.fragments.RecipeDetailsFragment;
 import com.baking.www.baking.fragments.StepDetailsParentFragment;
-import com.baking.www.baking.widget.GridWidgetservice;
+import com.baking.www.baking.widget.GridWidgetService;
 
 public class RecipeDetailsActivity extends AppCompatActivity
         implements RecipeDetailsFragment.OnFragmentInteractionListener {
-    public static final String STEPDETAILSFRAGMENT_TAG = "stepDetailsFragment";
-    public static final String INGREDIENTSFRAGMENT_TAG = "ingredientsFragment";
-    public static final String RECIPEDETAILSFRAGMENT_TAG = "recipeDetailsFragment";
+    public static final String STEP_DETAILS_FRAGMENT_TAG = "stepDetailsFragment";
+    public static final String INGREDIENTS_FRAGMENT_TAG = "ingredientsFragment";
+    public static final String RECIPE_DETAILS_FRAGMENT_TAG = "recipeDetailsFragment";
+    public static final String RECIPE_TITLE = "recipe_title";
 
     private Recipe recipe;
     private String ingredients;
@@ -55,35 +56,23 @@ public class RecipeDetailsActivity extends AppCompatActivity
 
         if (savedInstanceState != null) {
             if (mTwoPanel) {
-                if (savedInstanceState.getString("visibleFragment").equalsIgnoreCase(STEPDETAILSFRAGMENT_TAG)) {
-                    getSupportFragmentManager().findFragmentByTag(STEPDETAILSFRAGMENT_TAG);
-                } else if (savedInstanceState.getString("visibleFragment").equalsIgnoreCase(INGREDIENTSFRAGMENT_TAG)) {
-                    getSupportFragmentManager().findFragmentByTag(INGREDIENTSFRAGMENT_TAG);
+                String visibleFragment =savedInstanceState.getString("visibleFragment");
+                if (visibleFragment.equalsIgnoreCase(STEP_DETAILS_FRAGMENT_TAG)) {
+                    getSupportFragmentManager().findFragmentByTag(STEP_DETAILS_FRAGMENT_TAG);
+                }
+
+                if (visibleFragment.equalsIgnoreCase(INGREDIENTS_FRAGMENT_TAG)) {
+                    getSupportFragmentManager().findFragmentByTag(INGREDIENTS_FRAGMENT_TAG);
                 }
             } else {
-                getSupportFragmentManager().getFragment(savedInstanceState, RECIPEDETAILSFRAGMENT_TAG);
+                getSupportFragmentManager().getFragment(savedInstanceState, RECIPE_DETAILS_FRAGMENT_TAG);
             }
         } else {
-//            JSONArray jsonArray = null;
-//            try {
-//                jsonArray = new JSONArray(steps);
-//            } catch (JSONException e) {
-//                Logging.log(e.getMessage());
-//            }
-//
-//            Steps mSteps = new Steps(jsonArray);
-
             fragment = RecipeDetailsFragment.newInstance(recipe, ingredients, steps);
-            getSupportFragmentManager().beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .replace(R.id.recipe_details_frag_holder, fragment)
-                    .commit();
-
+            replaceFragment(fragment, null, FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             if (mTwoPanel) {
                 fragment = IngredientsFragment.newInstance(ingredients);
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.details_frag_holder, fragment, INGREDIENTSFRAGMENT_TAG)
-                        .commit();
+                replaceTwoPanelFragment(fragment, INGREDIENTS_FRAGMENT_TAG);
             }
         }
 
@@ -94,13 +83,13 @@ public class RecipeDetailsActivity extends AppCompatActivity
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         if (mTwoPanel) {
             if (fragment instanceof StepDetailsParentFragment) {
-                outState.putString("visibleFragment", STEPDETAILSFRAGMENT_TAG);
+                outState.putString("visibleFragment", STEP_DETAILS_FRAGMENT_TAG);
             } else if (fragment instanceof IngredientsFragment) {
-                outState.putString("visibleFragment", INGREDIENTSFRAGMENT_TAG);
+                outState.putString("visibleFragment", INGREDIENTS_FRAGMENT_TAG);
             }
         } else {
             if (fragment != null)
-                getSupportFragmentManager().putFragment(outState, RECIPEDETAILSFRAGMENT_TAG, fragment);
+                getSupportFragmentManager().putFragment(outState, RECIPE_DETAILS_FRAGMENT_TAG, fragment);
         }
         super.onSaveInstanceState(outState);
     }
@@ -132,6 +121,7 @@ public class RecipeDetailsActivity extends AppCompatActivity
                                 contentValue, null, null);
                 updateWidget(recipe.getName());
             }
+            cursor.close();
         } else {
             throw new UnsupportedOperationException("no such operation");
         }
@@ -145,26 +135,25 @@ public class RecipeDetailsActivity extends AppCompatActivity
         String fragmentTag;
         if (itemType == ITEM_INGREDIENT) {
             fragment = IngredientsFragment.newInstance(ingredients);
-            fragmentTag = INGREDIENTSFRAGMENT_TAG;
+            fragmentTag = INGREDIENTS_FRAGMENT_TAG;
         } else {
             fragment = StepDetailsParentFragment.newInstance(steps, itemType);
-            fragmentTag = STEPDETAILSFRAGMENT_TAG;
+            fragmentTag = STEP_DETAILS_FRAGMENT_TAG;
         }
 
         if (mTwoPanel) {
             replaceTwoPanelFragment(fragment, fragmentTag);
         } else {
-            replaceFragment(fragment, fragmentTag);
+            replaceFragment(fragment, fragmentTag, 0);
         }
     }
 
-    private void replaceFragment(Fragment fragment, String tag){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-        fragmentTransaction
-                .replace(R.id.recipe_details_frag_holder, fragment, tag)
-                .setTransition(FragmentTransaction.TRANSIT_NONE)
-                .addToBackStack(STEPDETAILSFRAGMENT_TAG).commit();
+    private void replaceFragment(Fragment fragment, String tag, int transition) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager()
+                .beginTransaction().replace(R.id.recipe_details_frag_holder, fragment, tag);
+        fragmentTransaction.setTransition((transition == 0) ? FragmentTransaction.TRANSIT_NONE : transition);
+        if (tag != null) fragmentTransaction.addToBackStack(STEP_DETAILS_FRAGMENT_TAG);
+        fragmentTransaction.commit();
     }
 
     private void replaceTwoPanelFragment(Fragment fragment,  String tag){
@@ -173,10 +162,10 @@ public class RecipeDetailsActivity extends AppCompatActivity
     }
 
     private void updateWidget(String recipeTitle) {
-        Intent intent = new Intent(this, GridWidgetservice.class);
+        Intent intent = new Intent(this, GridWidgetService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, R.xml.backing_widget_provider_info);
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
-        intent.putExtra("recipe_title", recipeTitle);
+        intent.putExtra(RECIPE_TITLE, recipeTitle);
         sendBroadcast(intent);
     }
 }

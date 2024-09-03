@@ -1,9 +1,11 @@
 package com.baking.www.baking.widget;
 
+import android.annotation.SuppressLint;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -20,7 +22,7 @@ import static com.baking.www.baking.providers.ContractClass.RecipeEntry.RECIPES_
  * Created by Dell on 26/05/2017.
  */
 
-public class GridWidgetservice extends RemoteViewsService {
+public class GridWidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
@@ -31,15 +33,14 @@ public class GridWidgetservice extends RemoteViewsService {
 
 class GridRemoteViewFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    private Context mContext;
+    private final Context mContext;
     private Cursor mCursor;
-    private int mAppWidgetId;
 
     private Ingredients ingredients;
 
     public GridRemoteViewFactory(Context context, Intent intent) {
         this.mContext = context;
-        mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+        int mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
@@ -53,14 +54,14 @@ class GridRemoteViewFactory implements RemoteViewsService.RemoteViewsFactory {
         mCursor = mContext.getContentResolver().query(RECIPES_CONTENT_URI, null, null, null, null);
         if (mCursor == null || mCursor.getCount() == 0) return;
         mCursor.moveToFirst();
-        String ingredientsString = mCursor.getString(mCursor.getColumnIndex(COLUMN_RECIPE_INGREDIENTS));
+        @SuppressLint("Range") String ingredientsString = mCursor.getString(mCursor.getColumnIndex(COLUMN_RECIPE_INGREDIENTS));
         JSONArray jsonArray = null;
         try {
             jsonArray = new JSONArray(ingredientsString);
+            ingredients = new Ingredients(jsonArray);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(this.getClass().getName(), e.getMessage());
         }
-        ingredients = new Ingredients(jsonArray);
     }
 
     @Override

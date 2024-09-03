@@ -1,5 +1,7 @@
 package com.baking.www.baking.widget;
 
+import static com.baking.www.baking.RecipeDetailsActivity.RECIPE_TITLE;
+
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -20,7 +22,7 @@ public class BackingWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
-            Intent intent = new Intent(context, GridWidgetservice.class);
+            Intent intent = new Intent(context, GridWidgetService.class);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
             RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.collection_widget_provider);
@@ -39,7 +41,7 @@ public class BackingWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        Logging.log(intent.getStringExtra("recipe_title"));
+        Logging.log(intent.getStringExtra(RECIPE_TITLE));
     }
 
     @Override
